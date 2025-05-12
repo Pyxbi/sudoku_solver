@@ -2,56 +2,65 @@ package BACKTRACKING;
 
 public class SudokuTest {
     public static void main(String[] args) {
-        int[][] puzzle = {
+        testCase("Case 1 invalid puzzle", new int[][]{
+                {5, 3, 5, 0, 7, 0, 0, 0, 0},
+                {6, 0, 0, 1, 9, 5, 0, 0, 0},
+                {0, 9, 8, 0, 0, 0, 0, 6, 0},
+                {8, 0, 0, 0, 6, 0, 0, 0, 3},
+                {4, 0, 0, 8, 0, 3, 0, 0, 1},
+                {7, 0, 0, 0, 2, 0, 0, 0, 6},
+                {0, 6, 0, 0, 0, 0, 2, 8, 0},
+                {0, 0, 0, 4, 1, 9, 0, 0, 5},
+                {0, 0, 0, 0, 8, 0, 0, 7, 9}
+        });
+
+        testCase("Case 2 (25 clues)", new int[][]{
                 {8, 0, 0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 3, 6, 0, 0, 0, 0, 0},
                 {0, 7, 0, 0, 9, 0, 2, 0, 0},
                 {0, 5, 0, 0, 0, 7, 0, 0, 0},
                 {0, 0, 0, 0, 4, 5, 7, 0, 0},
                 {0, 0, 0, 1, 0, 0, 0, 3, 0},
-                {0, 0, 1, 0, 0, 0, 0, 6, 8},
+                {2, 0, 1, 0, 0, 0, 0, 6, 8},
                 {0, 0, 8, 5, 0, 0, 0, 1, 0},
                 {0, 9, 0, 0, 0, 0, 4, 0, 0}
-        };
+        });
 
+        testCase("Case 3 (37 clues)", new int[][]{
+                {0, 2, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 6, 0, 0, 0, 0, 3},
+                {0, 7, 4, 0, 8, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 3, 0, 0, 2},
+                {0, 8, 0, 0, 4, 0, 0, 1, 0},
+                {6, 0, 0, 5, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 1, 0, 7, 8, 0},
+                {5, 0, 0, 0, 0, 9, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 4, 0}
+        });
+    }
+
+    public static void testCase(String name, int[][] puzzle) {
         SudokuBoard board = new SudokuBoard(puzzle);
         BacktrackingSolver solver = new BacktrackingSolver(board);
 
-        System.out.println("Solving Sudoku using Backtracking with Bitmasking...");
-        System.out.println("Original Puzzle:");
-        board.printBoard();
-
-        // Force garbage collection
         System.gc();
         Runtime runtime = Runtime.getRuntime();
         long beforeMemory = runtime.totalMemory() - runtime.freeMemory();
 
-        System.out.println("Solving this Sudoku:");
-
-        // Start timing
         long startTime = System.nanoTime();
         boolean solved = solver.solve();
         long endTime = System.nanoTime();
 
-        // Force garbage collection again
         System.gc();
         long afterMemory = runtime.totalMemory() - runtime.freeMemory();
         long memoryUsed = afterMemory - beforeMemory;
 
-        // Output the solution
-        if (solved) {
-            System.out.println("Solved Sudoku:");
-            board.printBoard();
-        } else {
-            System.out.println("This Sudoku cannot be solved.");
-        }
-
-        // Output performance metrics
         double durationInMs = (endTime - startTime) / 1_000_000.0;
-        System.out.printf("Solving time: %.3f ms\n", durationInMs);
-        System.out.printf("Memory used: %.2f KB\n", Math.abs(memoryUsed) / 1024.0);
-        System.out.println("Valid solution: " + isValidSudoku(board.getBoard()));
+
+        System.out.printf("%s | Time: %.3f ms | Memory: %.2f KB | Solved: %s\n",
+                name, durationInMs, Math.abs(memoryUsed) / 1024.0, solved ? "Yes" : "No");
     }
+
     public static boolean isValidSudoku(int[][] board) {
         for (int i = 0; i < 9; i++) {
             boolean[] row = new boolean[10];
