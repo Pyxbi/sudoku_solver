@@ -56,9 +56,14 @@ public class SudokuTest {
         long memoryUsed = afterMemory - beforeMemory;
 
         double durationInMs = (endTime - startTime) / 1_000_000.0;
+        boolean withinTwoMinutes = (endTime - startTime) <= 120_000_000_000L;
 
-        System.out.printf("%s | Time: %.3f ms | Memory: %.2f KB | Solved: %s\n",
-                name, durationInMs, Math.abs(memoryUsed) / 1024.0, solved ? "Yes" : "No");
+        System.out.printf("%s | Time: %.3f ms | Memory: %.2f KB | Solved: %s | Within 2 min: %s\n",
+                name,
+                durationInMs,
+                Math.abs(memoryUsed) / 1024.0,
+                solved ? "Yes" : "No",
+                withinTwoMinutes ? "Yes" : "No");
     }
 
     public static boolean isValidSudoku(int[][] board) {
