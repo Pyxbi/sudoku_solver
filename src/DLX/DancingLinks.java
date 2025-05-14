@@ -1,3 +1,5 @@
+package DLX;
+
 // Manages the Dancing Links matrix construction and operations for solving Sudoku using the Exact Cover problem
 class DancingLinks {
     // Constants defining the matrix dimensions
@@ -160,7 +162,7 @@ class DancingLinks {
         // Update the right pointer of the left neighbor to skip the current header
         topColumnNode.left.right = topColumnNode.right;
 
-        // Traverse each row in the column (each DLNode representing a 1)
+        // Traverse each row in the column (each DLX.DLNode representing a 1)
         DLBaseNode i = topColumnNode.down;
         while (i != topColumnNode) {
             // For each node in the row, remove the row from its respective column
