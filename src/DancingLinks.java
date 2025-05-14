@@ -209,7 +209,6 @@ class DancingLinks {
     public DLHeaderNode getMasterNode() {
         return masterNode;
     }
-
     // Finds the column with the smallest number of 1s (fewest remaining rows)
     // This heuristic improves the efficiency of the DLX algorithm by minimizing branching
     // @return The column header with the smallest size
