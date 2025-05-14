@@ -154,30 +154,35 @@ class DancingLinks {
     // This is part of the DLX algorithm to temporarily exclude a column during the search
     // @param topColumnNode The header node of the column to cover
     public void coverColumn(DLHeaderNode topColumnNode) {
-        // Remove the column from the horizontal linked list
+        // Remove the column from the horizontal linked list of column headers
+        // Update the left pointer of the right neighbor to skip the current header
         topColumnNode.right.left = topColumnNode.left;
+        // Update the right pointer of the left neighbor to skip the current header
         topColumnNode.left.right = topColumnNode.right;
 
-        // Traverse each row in the column
+        // Traverse each row in the column (each DLNode representing a 1)
         DLBaseNode i = topColumnNode.down;
         while (i != topColumnNode) {
-            // For each node in the row, remove the row from its column
+            // For each node in the row, remove the row from its respective column
             DLBaseNode j = i.right;
             while (j != i) {
-                // Unlink the node vertically
+                // Unlink the node vertically from its column
+                // Connect the node above to the node below, bypassing the current node
                 j.down.up = j.up;
                 j.up.down = j.down;
-                // Decrement the size of the column
+                // Decrement the size of the column this node belongs to
                 ((DLNode) j).header.size--;
+                // Move to the next node in the row
                 j = j.right;
             }
+            // Move to the next row in the column
             i = i.down;
         }
     }
 
     // Uncovers a previously covered column, restoring it and its associated rows
-    // This reverses the coverColumn operation during backtracking
-    // @param topColumnNode The header node of the column to uncover
+// This reverses the coverColumn operation during backtracking
+// @param topColumnNode The header node of the column to uncover
     public void uncoverColumn(DLHeaderNode topColumnNode) {
         // Traverse the rows in reverse order (bottom to top)
         DLBaseNode i = topColumnNode.up;
@@ -186,17 +191,17 @@ class DancingLinks {
             DLBaseNode j = i.left;
             while (j != i) {
                 // Restore the vertical links
-                ((DLNode) j).header.size++;
-                j.down.up = j;
-                j.up.down = j;
-                j = j.left;
+                ((DLNode) j).header.size++; // Increment the size of the column
+                j.down.up = j;              // Reconnect the node above to this node
+                j.up.down = j;              // Reconnect the node below to this node
+                j = j.left;                 // Move to the next node in the row (left)
             }
-            i = i.up;
+            i = i.up;                       // Move to the next row (up)
         }
 
         // Restore the column in the horizontal linked list
-        topColumnNode.right.left = topColumnNode;
-        topColumnNode.left.right = topColumnNode;
+        topColumnNode.right.left = topColumnNode; // Reconnect the right neighbor's left pointer
+        topColumnNode.left.right = topColumnNode; // Reconnect the left neighbor's right pointer
     }
 
     // Returns the master node (root) of the matrix
@@ -206,18 +211,23 @@ class DancingLinks {
     }
 
     // Finds the column with the smallest number of 1s (fewest remaining rows)
-    // This heuristic improves the efficiency of the DLX algorithm
+    // This heuristic improves the efficiency of the DLX algorithm by minimizing branching
     // @return The column header with the smallest size
     public DLHeaderNode getSmallestColumn() {
-        DLHeaderNode c = (DLHeaderNode) masterNode.right; // Start with the first column
+        // Start with the first column header in the circular list (right of master node)
+        DLHeaderNode c = (DLHeaderNode) masterNode.right;
+        // Temporary pointer to iterate through the column headers
         DLHeaderNode tempC = (DLHeaderNode) masterNode.right;
-        // Iterate through all columns to find the one with the smallest size
+        // Iterate through all column headers in the circular list until reaching the master node
         while (tempC != masterNode) {
+            // Update c if the current column has fewer 1s than the previous smallest
             if (tempC.size < c.size) {
                 c = tempC;
             }
+            // Move to the next column header
             tempC = (DLHeaderNode) tempC.right;
         }
+        // Return the column header with the smallest size
         return c;
     }
 }
