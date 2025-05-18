@@ -64,7 +64,7 @@ class RMIT_Sudoku_Solver {
             // Place the number in the result grid
             result[row][col] = num;
 
-            // Cover all columns associated with this row (i.e., other constraints)
+            // Cover all columns associated with this row
             DLBaseNode j = r.right;
             while (j != r) {
                 dlMatrix.coverColumn(((DLNode) j).header);
@@ -77,7 +77,7 @@ class RMIT_Sudoku_Solver {
             // If a solution is found, exit early
             if (solutionFound) return;
 
-            // Backtrack: Reset the cell to 0 (undo the move)
+            // Reset the cell to 0 (undo the move)
             result[row][col] = 0;
 
             // Uncover the columns associated with this row in reverse order
