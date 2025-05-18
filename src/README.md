@@ -49,24 +49,97 @@ The starting score for each student is 5 points. Each group can decide to add/re
 - design class diagram
 - Report reaserching and writting
 - etc...
-
 ### II. INSTRUCTION
 
-#### a. Main class.
-> The main method will be put in the file "Application", we already set up some of the data for user to run. The parameter to put in each method as below:
+#### a. Main class
+> The main entry point is the `Main.java` file. This class allows users to define Sudoku puzzles and execute the solver. The application supports solving puzzles using Donald Knuth’s Algorithm X implemented through the Dancing Links (DLX) data structure. Users can also benchmark performance and memory usage.
 
-- **add(places)**: The "places" is an array of Places object.
-- **map.edit(x, y, arrayListService)**: The "x" and the "y" will be the coordinate of the place that you want to fix it service list. The "arrayListService" will be an array of new service, it mean what ever you put in the "arrayListService", the places will offers that services after the edit proccess.
-- **map.remove(x, y)**: The "x" and the "y" is the coordinate of the places that we want to remove
-- **map.searchPlaces(location_x, location_y, half_width, half_height, service)**: "location_x" and "location_y" represents the coordinate of your current location, the "half_width" and "half_heigth" will be the half of width and heigth length of your bounding rectangle, the "service" will be the service that you want to search for. The return valud for this method will be a "PlaceList".
+**Key operations:**
+- Define a 9×9 puzzle as a 2D integer array (`0` represents empty cells).
+- Instantiate the `RMIT_Sudoku_Solver` class with the puzzle as input.
+- Call the `solve()` method to compute the solution.
+- Output is displayed on the console with timing and memory statistics.
 
-#### b. Test Effeciency class.
->The "TestEffeciency" file that we contain in the folder will be use for some particular reason. If the user want to test the method on a large number of data, this file can help you to generate the random number of data base on your choice. However, for the small test, we recommend you to use the created data that we put in the Main class.
+**Example usage:**
+```java
+int[][] puzzle = {
+        {5,3,0,0,7,0,0,0,0},
+        {6,0,0,1,9,5,0,0,0},
+        {0,9,8,0,0,0,0,6,0},
+        {8,0,0,0,6,0,0,0,3},
+        {4,0,0,8,0,3,0,0,1},
+        {7,0,0,0,2,0,0,0,6},
+        {0,6,0,0,0,0,2,8,0},
+        {0,0,0,4,1,9,0,0,5},
+        {0,0,0,0,8,0,0,7,9}
+};
+RMIT_Sudoku_Solver solver = new RMIT_Sudoku_Solver(puzzle);
+solver.solve();
+```
+
+#### b. Solver logic
+> The system models Sudoku as an Exact Cover problem and solves it using recursive backtracking via DLX. The `RMIT_Sudoku_Solver` builds the matrix, applies pre-filled clues, and runs `dlSearch()` to find a valid solution. The solution is reconstructed into a 9×9 grid and printed.
+
+**Core methods:**
+- `solve()`: Prepares matrix and initiates solving.
+- `dlSearch(int k, DLHeaderNode masterNode)`: Recursively searches for the solution.
+- `handlePreFilledEntries()`: Prunes the search space using the initial clues.
+
+#### c. Testing and validation
+> The project includes unit and functional testing to ensure solver correctness. The test cases cover a variety of puzzles, including:
+- Fully solved
+- Empty puzzle
+- Puzzles with one missing cell
+- Extremely hard puzzles (e.g. 17-clue)
+- Invalid puzzles
+
+**Validation utility:**
+- `isValidSudoku()`: Ensures the final solution adheres to Sudoku rules.
+
+Refer to `Appendix B` of the report for detailed unit and functional test results.
+
+#### d. Performance evaluation
+> To evaluate efficiency, each algorithm folder contains a `Test.java` file to benchmark:
+- **DLX (Dancing Links)**
+- **Backtracking**
+- **Constraint Propagation**
+
+These test files log:
+- Execution time in milliseconds
+- Memory usage in KB
+- Whether the puzzle is solved correctly
+- Whether the solution completes within 2 minutes
+
+**Sample output:**
+
+
+> ```
+> Case 2: 17-Clue Unique Puzzle | Time: 0.09 ms | Memory: 7.02 KB | Valid: Yes | Within 2 min: Yes
+> Case 3: Easy Puzzle | Time: 0.12 ms | Memory: 17.84 KB | Valid: Yes | Within 2 min: Yes
+> ```
+
+> For small-scale testing or demonstration, modify the puzzle directly in `Main.java`. For large-scale benchmarking, use the `Test.java` files provided under each solver’s folder.
+
+#### e. Test Efficiency class
+> The `TestEfficiency` file included in the folder is provided to **benchmark the performance** of three different Sudoku-solving algorithms: **Dancing Links (DLX)**, **Backtracking**, and **Constraint Propagation**. This file is especially useful when you want to test the methods on a **large number of puzzles** with varying difficulty levels, such as easy puzzles, extremely hard puzzles (like 17-clue ones), or even invalid ones.
+
+Each solver has its own version of `Test.java` located in their respective folders. These files will:
+- Automatically run a series of predefined Sudoku puzzles.
+- Measure **execution time**, **memory usage**, and whether the puzzle is **solved correctly within 2 minutes**.
+- Print a consistent summary report for easy comparison.
+
+> ```
+> Case 4: Easy Puzzle (45 clues) | Time: 0.07 ms | Memory: 12.83 KB | Valid: Yes | Within 2 min: Yes
+> Case 8: 17-clue Puzzle | Time: 1.03 ms | Memory: 18.04 KB | Valid: Yes | Within 2 min: Yes
+> ```
+
+> For small-scale testing or function validation, we recommend using the manually created test data inside the `Main.java` file instead. For performance benchmarking or algorithm comparison, run the corresponding `Test.java` file inside each algorithm’s directory.
+
 
 ### III. OTHER RESOURCES
 
 #### a. DEMONSTRATION VIDEO
-[CLICK HERE TO GO TO DEMONSTRATION VIDEO ON YOUTUBE]()
+[CLICK HERE TO GO TO DEMONSTRATION VIDEO ON YOUTUBE](https://rmiteduau-my.sharepoint.com/:v:/g/personal/s3980883_rmit_edu_vn/Ec4OYlhiCtBHlwK4glJfNxcB5YZ8rvYINX1n6z8tL6AM2Q?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=cqMkVD)
 
 
 #### b. UML DIAGRAM
